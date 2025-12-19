@@ -24,7 +24,10 @@ export default function PatchNotesModal({
         <DialogHeader className='sticky top-0 z-10 border-b border-[var(--border-color)] bg-[var(--background-color)] px-6 pt-6 pb-4'>
           <DialogTitle className='text-2xl'>Patch Notes</DialogTitle>
         </DialogHeader>
-        <div className='flex-1 overflow-y-auto px-6 py-4'>
+        <div
+          id='patch-notes-scroll'
+          className='flex-1 overflow-y-auto px-6 py-4'
+        >
           <div className='space-y-8'>
             {patchNotesData.map((patch, index) => (
               <div key={index}>

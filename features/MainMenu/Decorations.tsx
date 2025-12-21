@@ -63,15 +63,6 @@ const GRID_CONFIG = {
   mobile: { cols: 10, cellSize: 36, gap: 2 } // grid-cols-10
 };
 
-// Gradual animation configuration - peaceful, zen-like continuous cycling
-const ANIMATION_CONFIG = {
-  baseCount: 100, // ~100 characters animating at any given time (~13% of desktop grid)
-  turnoverFrequency: 2500, // Every 2.5 seconds, cycle some characters
-  turnoverCount: 20, // Remove and add 20 characters each cycle (gradual change)
-  pulseDuration: 3000, // 3s pulse for peaceful, breathing effect
-  minOpacity: 0.4, // Noticeable but not harsh (0.4-1.0)
-  maxOpacity: 1.0 // Full brightness at peak
-};
 
 // Calculate how many characters to render based on viewport
 const calculateVisibleCount = (interactive: boolean): number => {
@@ -291,10 +282,9 @@ InteractiveChar.displayName = 'InteractiveChar';
 
 interface StaticCharProps {
   style: CharacterStyle;
-  targetOpacity: number;
 }
 
-const StaticChar = memo(({ style, targetOpacity }: StaticCharProps) => {
+const StaticChar = memo(({ style }: StaticCharProps) => {
   return (
     <span
       className={clsx(
@@ -305,9 +295,7 @@ const StaticChar = memo(({ style, targetOpacity }: StaticCharProps) => {
       style={{
         color: style.color,
         contentVisibility: 'auto',
-        containIntrinsicSize: '36px',
-        opacity: targetOpacity,
-        transition: 'opacity 600ms ease-in-out'
+        containIntrinsicSize: '36px'
       }}
     >
       {style.char}
@@ -334,8 +322,6 @@ const Decorations = ({
   const [visibleCount, setVisibleCount] = useState<number>(() =>
     calculateVisibleCount(interactive)
   );
-  // Map of character index to target opacity (1.0 for idle, varies for animating)
-  const [opacityMap, setOpacityMap] = useState<Map<number, number>>(new Map());
   const { playClick } = useClick();
 
   // Store latest playClick in ref to keep handleExplode stable
@@ -385,7 +371,7 @@ const Decorations = ({
     };
   }, [visibleCount, forceShow]);
 
-  // Inject animation keyframes once when component mounts
+  // Inject animation keyframes once when component mounts (for interactive mode only)
   useEffect(() => {
     const styleId = 'decorations-animation-keyframes';
     // Only inject if not already present
@@ -405,102 +391,6 @@ const Decorations = ({
     };
   }, []);
 
-  // JavaScript-based smooth pulsing animation system
-  useEffect(() => {
-    // Only run in static mode
-    if (interactive || styles.length === 0) return;
-
-    // Track which characters are pulsing and their animation state
-    const pulsingChars = new Set<number>();
-    const animationState = new Map<
-      number,
-      { startTime: number; phase: number }
-    >();
-
-    // Select initial random characters to pulse
-    const initialCount = Math.min(ANIMATION_CONFIG.baseCount, styles.length);
-    while (pulsingChars.size < initialCount) {
-      const randomIndex = Math.floor(Math.random() * styles.length);
-      if (!pulsingChars.has(randomIndex)) {
-        pulsingChars.add(randomIndex);
-        animationState.set(randomIndex, {
-          startTime: Date.now() - Math.random() * ANIMATION_CONFIG.pulseDuration,
-          phase: Math.random() * Math.PI * 2
-        });
-      }
-    }
-
-    let rafId: number;
-    const animate = () => {
-      const now = Date.now();
-      const newOpacityMap = new Map<number, number>();
-
-      // Update opacity for pulsing characters
-      pulsingChars.forEach(index => {
-        const state = animationState.get(index);
-        if (state) {
-          const elapsed = now - state.startTime;
-          const progress = (elapsed % ANIMATION_CONFIG.pulseDuration) / ANIMATION_CONFIG.pulseDuration;
-          // Smooth sine wave for breathing effect
-          const opacity =
-            ANIMATION_CONFIG.minOpacity +
-            (ANIMATION_CONFIG.maxOpacity - ANIMATION_CONFIG.minOpacity) *
-              (Math.sin(progress * Math.PI * 2 - Math.PI / 2) * 0.5 + 0.5);
-          newOpacityMap.set(index, opacity);
-        }
-      });
-
-      // Set idle opacity for non-pulsing characters (or let them default)
-      setOpacityMap(newOpacityMap);
-
-      rafId = requestAnimationFrame(animate);
-    };
-
-    // Start animation loop
-    rafId = requestAnimationFrame(animate);
-
-    // Gradual turnover: periodically swap which characters are pulsing
-    const turnoverInterval = setInterval(() => {
-      // Remove some random characters from pulsing
-      const pulsingArray = Array.from(pulsingChars);
-      const toRemove = Math.min(
-        ANIMATION_CONFIG.turnoverCount,
-        pulsingArray.length
-      );
-
-      for (let i = 0; i < toRemove; i++) {
-        const randomIndex = Math.floor(Math.random() * pulsingArray.length);
-        const charIndex = pulsingArray[randomIndex];
-        pulsingChars.delete(charIndex);
-        animationState.delete(charIndex);
-        pulsingArray.splice(randomIndex, 1);
-      }
-
-      // Add new random characters to pulse
-      let attempts = 0;
-      while (
-        pulsingChars.size < ANIMATION_CONFIG.baseCount &&
-        attempts < ANIMATION_CONFIG.turnoverCount * 10
-      ) {
-        const randomIndex = Math.floor(Math.random() * styles.length);
-        if (!pulsingChars.has(randomIndex)) {
-          pulsingChars.add(randomIndex);
-          animationState.set(randomIndex, {
-            startTime: Date.now(),
-            phase: Math.random() * Math.PI * 2
-          });
-        }
-        attempts++;
-      }
-    }, ANIMATION_CONFIG.turnoverFrequency);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      clearInterval(turnoverInterval);
-      setOpacityMap(new Map());
-    };
-  }, [interactive, styles.length]);
-
   // Memoize grid content - using separate components for interactive vs static
   const gridContent = useMemo(() => {
     if (styles.length === 0) return null;
@@ -512,16 +402,12 @@ const Decorations = ({
         <InteractiveChar key={index} style={style} onExplode={handleExplode} />
       ));
     } else {
-      // Static mode: JavaScript-controlled smooth pulsing
+      // Static mode: simple display, no animations
       return styles.map((style, index) => (
-        <StaticChar
-          key={index}
-          style={style}
-          targetOpacity={opacityMap.get(index) ?? 1.0}
-        />
+        <StaticChar key={index} style={style} />
       ));
     }
-  }, [styles, interactive, handleExplode, opacityMap]);
+  }, [styles, interactive, handleExplode]);
 
   if (styles.length === 0) return null;
 

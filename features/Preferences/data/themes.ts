@@ -755,6 +755,12 @@ const baseThemeSets: BaseThemeGroup[] = [
         backgroundColor: 'oklch(14.5% 0.046 278.0 / 1)',
         mainColor: 'oklch(94.0% 0.072 92.0 / 1)',
         secondaryColor: 'oklch(81.0% 0.180 328.0 / 1)'
+      },
+      {
+        id: 'tsurara',
+        backgroundColor: 'oklch(13.0% 0.041 290.0 / 1)',
+        mainColor: 'oklch(88.0% 0.222 192.0 / 1)',
+        secondaryColor: 'oklch(90.5% 0.207 28.0 / 1)'
       }
     ]
   },

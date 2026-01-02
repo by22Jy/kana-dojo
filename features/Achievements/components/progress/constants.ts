@@ -1,4 +1,20 @@
-import { Trophy, Star, Zap, Crown, Gem } from 'lucide-react';
+import {
+  Trophy,
+  Star,
+  Zap,
+  Crown,
+  Gem,
+  Flame,
+  Target,
+  Timer,
+  Compass,
+  Sparkles,
+  Languages,
+  BookOpen,
+  ScrollText,
+  Swords,
+  Gauge
+} from 'lucide-react';
 import { LucideProps } from 'lucide-react';
 import { type AchievementRarity } from '@/features/Achievements/store/useAchievementStore';
 
@@ -55,13 +71,29 @@ export const rarityConfig: Record<
 
 /**
  * Category filter options for achievement display
+ * Organized by: All, Content Types, Game Modes, Progress Types
  */
 export const categories = [
-  { id: 'all', label: 'All Achievements', icon: Trophy },
+  // All achievements
+  { id: 'all', label: 'All', icon: Trophy },
+
+  // Content-based achievements
+  { id: 'kana', label: 'Kana', icon: Languages },
+  { id: 'kanji', label: 'Kanji', icon: BookOpen },
+  { id: 'vocabulary', label: 'Vocabulary', icon: ScrollText },
+
+  // Game mode achievements
+  { id: 'gauntlet', label: 'Gauntlet', icon: Swords },
+  { id: 'blitz', label: 'Blitz', icon: Gauge },
+
+  // Progress-based achievements
   { id: 'milestone', label: 'Milestones', icon: Star },
-  { id: 'streak', label: 'Streaks', icon: Zap },
-  { id: 'consistency', label: 'Consistency', icon: Crown },
-  { id: 'mastery', label: 'Mastery', icon: Gem }
+  { id: 'streak', label: 'Streaks', icon: Flame },
+  { id: 'speed', label: 'Speed', icon: Timer },
+  { id: 'consistency', label: 'Consistency', icon: Target },
+  { id: 'mastery', label: 'Mastery', icon: Crown },
+  { id: 'exploration', label: 'Exploration', icon: Compass },
+  { id: 'fun', label: 'Fun & Secret', icon: Sparkles }
 ] as const;
 
 export type CategoryId = (typeof categories)[number]['id'];

@@ -165,7 +165,6 @@ const WordBuildingGame = ({
       };
     }, [kanaGroupIndices]);
 
-  const [feedback, setFeedback] = useState(<>{'Build the word!'}</>);
   const [bottomBarState, setBottomBarState] = useState<BottomBarState>('check');
 
   // Generate a word (array of characters) and distractors
@@ -230,7 +229,6 @@ const WordBuildingGame = ({
     setPlacedTiles([]);
     setIsChecking(false);
     setBottomBarState('check');
-    setFeedback(<>{'Build the word!'}</>);
   }, [generateWord]);
 
   useEffect(() => {
@@ -284,15 +282,6 @@ const WordBuildingGame = ({
       incrementCorrectAnswers();
       setScore(score + wordData.wordChars.length);
       setBottomBarState('correct');
-
-      setFeedback(
-        <>
-          <span>
-            {wordData.wordChars.join('')} = {wordData.answerChars.join('')}
-          </span>
-          <CircleCheck className='ml-2 inline text-[var(--main-color)]' />
-        </>
-      );
     } else {
       playErrorTwice();
       triggerCrazyMode();
@@ -309,13 +298,6 @@ const WordBuildingGame = ({
       }
 
       setBottomBarState('wrong');
-
-      setFeedback(
-        <>
-          <span>Wrong! Correct: {wordData.answerChars.join('')}</span>
-          <CircleX className='ml-2 inline text-[var(--main-color)]' />
-        </>
-      );
 
       onWrong();
     }
@@ -378,12 +360,12 @@ const WordBuildingGame = ({
         isHidden && 'hidden'
       )}
     >
-      <GameIntel gameMode='word-building' feedback={feedback} />
+      <GameIntel gameMode='word-building' />
 
       {/* Word Display */}
       <div className='flex flex-row items-center gap-1'>
         <motion.p
-          className='text-7xl  sm:text-8xl'
+          className='text-7xl sm:text-8xl'
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           key={wordData.wordChars.join('')}
@@ -420,18 +402,24 @@ const WordBuildingGame = ({
         const renderTile = (char: string) => {
           const isPlaced = placedTiles.includes(char);
 
-          if (isPlaced) {
-            return <BlankTile key={`blank-${char}`} char={char} />;
-          }
-
           return (
-            <ActiveTile
-              key={`tile-${char}`}
-              id={`tile-${char}`}
-              char={char}
-              onClick={() => handleTileClick(char)}
-              isDisabled={isChecking}
-            />
+            <div key={`tile-slot-${char}`} className='relative'>
+              {/* Blank tile is ALWAYS rendered underneath (z-0) */}
+              <BlankTile char={char} />
+
+              {/* Active tile overlays on top (z-10 + absolute) when NOT placed.
+                  This ensures when it animates back here, the blank is already there. */}
+              {!isPlaced && (
+                <div className='absolute inset-0 z-10'>
+                  <ActiveTile
+                    id={`tile-${char}`}
+                    char={char}
+                    onClick={() => handleTileClick(char)}
+                    isDisabled={isChecking}
+                  />
+                </div>
+              )}
+            </div>
           );
         };
 

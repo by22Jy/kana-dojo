@@ -8,7 +8,8 @@ After completing any code changes, follow these rules from AGENTS.md:
 
 ⛔ **DO NOT RUN the git command yourself.** Only provide the command for the user to run manually.
 
-> **IMPORTANT:** When generating a commit command, only include changes that are currently git unadded (shown in `git status`). Do NOT create a cumulative commit message covering the entire conversation session. Each commit should describe only the specific changes made since the last commit.
+> [!CAUTION]
+> **NON-CUMULATIVE COMMITS ONLY:** Before generating a commit command, run `git status` to see what files are currently modified/unadded. Your commit message must ONLY describe those specific changes - NOT a summary of everything done in the conversation session. If this workflow is called multiple times in one session, each commit should be independent and describe only the changes since the last commit.
 
 1. **Format:** Use conventional commits with multiple `-m` flags for multiline messages:
 

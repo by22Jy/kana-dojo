@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { CircleCheck, CircleX, CircleArrowRight } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import useKanjiStore, { IKanjiObj } from '@/features/Kanji/store/useKanjiStore';
@@ -109,6 +109,9 @@ const KanjiInputGame = ({
       ];
 
   const [displayAnswerSummary, setDisplayAnswerSummary] = useState(false);
+  const [feedback, setFeedback] = useState<React.ReactElement>(
+    <>{'feedback ~'}</>
+  );
 
   useEffect(() => {
     if (inputRef.current && bottomBarState === 'check') {
@@ -203,6 +206,16 @@ const KanjiInputGame = ({
     resetWrongStreak();
     setBottomBarState('correct');
     setDisplayAnswerSummary(true);
+
+    // Set feedback for the answer summary
+    const displayText = isReverse ? correctKanjiObj?.meanings[0] : correctChar;
+    const answerText = isReverse ? correctKanjiObj?.kanjiChar : userInput;
+    setFeedback(
+      <>
+        <span className='text-[var(--secondary-color)]'>{`${displayText} = ${answerText} `}</span>
+        <CircleCheck className='inline text-[var(--main-color)]' />
+      </>
+    );
   };
 
   const handleWrongAnswer = () => {
@@ -275,7 +288,7 @@ const KanjiInputGame = ({
         <AnswerSummary
           payload={currentKanjiObj}
           setDisplayAnswerSummary={setDisplayAnswerSummary}
-          feedback={<></>}
+          feedback={feedback}
           isEmbedded={true}
         />
       ) : (

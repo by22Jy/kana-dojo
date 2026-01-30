@@ -410,32 +410,33 @@ const DemoGame = () => {
 
   // Generate a question based on the current type
   const generateQuestion = useCallback((type: QuestionType): Question => {
-    if (type === 'kana') {
-      const correctIndex = random.integer(0, DEMO_KANA.length - 1);
-      let wrongIndex = random.integer(0, DEMO_KANA.length - 1);
-      while (wrongIndex === correctIndex) {
-        wrongIndex = random.integer(0, DEMO_KANA.length - 1);
-      }
-      return {
-        type: 'kana',
-        display: DEMO_KANA[correctIndex].kana,
-        correctAnswer: DEMO_KANA[correctIndex].romaji,
-        wrongAnswer: DEMO_KANA[wrongIndex].romaji,
-      };
-    } else {
-      // type === 'kanji'
-      const correctIndex = random.integer(0, DEMO_KANJI.length - 1);
-      let wrongIndex = random.integer(0, DEMO_KANJI.length - 1);
-      while (wrongIndex === correctIndex) {
-        wrongIndex = random.integer(0, DEMO_KANJI.length - 1);
-      }
-      return {
-        type: 'kanji',
-        display: DEMO_KANJI[correctIndex].kanji,
-        correctAnswer: DEMO_KANJI[correctIndex].meaning,
-        wrongAnswer: DEMO_KANJI[wrongIndex].meaning,
-      };
+    // KANA TEMPORARILY DISABLED
+    // if (type === 'kana') {
+    //   const correctIndex = random.integer(0, DEMO_KANA.length - 1);
+    //   let wrongIndex = random.integer(0, DEMO_KANA.length - 1);
+    //   while (wrongIndex === correctIndex) {
+    //     wrongIndex = random.integer(0, DEMO_KANA.length - 1);
+    //   }
+    //   return {
+    //     type: 'kana',
+    //     display: DEMO_KANA[correctIndex].kana,
+    //     correctAnswer: DEMO_KANA[correctIndex].romaji,
+    //     wrongAnswer: DEMO_KANA[wrongIndex].romaji,
+    //   };
+    // } else {
+    // type === 'kanji' (only kanji is active)
+    const correctIndex = random.integer(0, DEMO_KANJI.length - 1);
+    let wrongIndex = random.integer(0, DEMO_KANJI.length - 1);
+    while (wrongIndex === correctIndex) {
+      wrongIndex = random.integer(0, DEMO_KANJI.length - 1);
     }
+    return {
+      type: 'kanji',
+      display: DEMO_KANJI[correctIndex].kanji,
+      correctAnswer: DEMO_KANJI[correctIndex].meaning,
+      wrongAnswer: DEMO_KANJI[wrongIndex].meaning,
+    };
+    // }
   }, []);
 
   // Get shuffled tiles (always 2: correct + wrong)

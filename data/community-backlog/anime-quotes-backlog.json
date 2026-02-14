@@ -516,7 +516,7 @@
     "english": "Lend me your energy!",
     "anime": "Dragon Ball Z",
     "character": "Son Goku",
-    "completed": false,
+    "completed": true,
     "issued": false
   }
 ]

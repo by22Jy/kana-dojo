@@ -470,13 +470,13 @@
   {
     "id": 79,
     "text": "\"〜にすぎない\" means \"no more than...\".",
-    "completed": false,
+    "completed": true,
     "issued": false
   },
   {
     "id": 80,
     "text": "\"〜てはじめて\" means \"only after...\".",
-    "issued": false,
+    "issued": true,
     "completed": false
   },
   {

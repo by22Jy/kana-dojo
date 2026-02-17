@@ -453,12 +453,12 @@
     "id": 76,
     "fact": "Japan has a zero-tolerance policy for drunk driving - any detectable alcohol means immediate arrest and potential prison time.",
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "id": 77,
     "fact": "There's a Japanese concept 'shuhari' (å®ˆç ´é›¢) - follow the rules, break the rules, transcend the rules - the path to mastery.",
-    "issued": false,
+    "issued": true,
     "completed": false
   },
   {
